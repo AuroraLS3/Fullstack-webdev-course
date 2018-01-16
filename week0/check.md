@@ -7,3 +7,7 @@
 ### 0.4 ([As Text](0.4.txt))
 
 ![Kuva](0.4.png)
+
+### 0.5 ([As Text](0.5.txt))
+
+![Kuva](0.5.png)
