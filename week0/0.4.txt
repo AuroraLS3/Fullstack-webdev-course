@@ -1,0 +1,30 @@
+title GET notes
+
+kayttaja->selain:
+note left of selain
+kayttaja klikkaa Talleta nappia
+end note
+selain->palvelin: POST fullstack-exampleapp.herokuapp.com/new_note
+palvelin->selain: status 302 REDIRECT, /notes
+note left of selain
+Selain lataa sivun /notes
+end note
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/notes
+palvelin->selain: status 304, sivun HTML-koodi
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/main.css
+palvelin->selain: status 304, CSS-koodi
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/main.js
+palvelin->selain: status 304, JavaScript-koodi
+
+note left of selain
+ selain näyttää palvelimen palauttaman 
+ HTML:n ja ajaa javascript koodin
+end note
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/data.json
+palvelin->selain: status 200, JSON
+
+note left of selain
+ javascript avaa JSON tiedot ja 
+ lisää muistiinpanot sivulle
+end note
