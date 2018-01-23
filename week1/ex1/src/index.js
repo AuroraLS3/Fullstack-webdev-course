@@ -3,46 +3,60 @@ import ReactDOM from 'react-dom'
 
 const Otsikko = (props) => {
     return (
-        <h1>{props.kurssi}</h1>
+        <h1>{props.kurssi.nimi}</h1>
     )
 }
 
 const Osa = (props) => {
     return (
-        <p>{props.nimi} {props.count}</p>
+        <p>{props.osa.nimi} {props.osa.tehtavia}</p>
     )
 }
 
 const Sisalto = (props) => {
     return (
         <div>
-            <Osa nimi={props.o1} count={props.c1} />
-            <Osa nimi={props.o2} count={props.c2} />
-            <Osa nimi={props.o3} count={props.c3} />
+            <Osa osa={props.osat[0]} />
+            <Osa osa={props.osat[1]} />
+            <Osa osa={props.osat[2]} />
         </div>
     )
 }
 
 const Yhteensa = (props) => {
+
+    const num = props.osat.map(osa => osa.tehtavia)
+    const yht = num[0] + num[1] + num[2];
+
     return (
-        <p>yhteensä {props.count} tehtävää</p>
+        <p>yhteensä {yht} tehtävää</p>
     )
 }
 
 const App = () => {
-    const kurssi = 'Half Stack -sovelluskehitys'
-    const osa1 = 'Reactin perusteet'
-    const tehtavia1 = 10
-    const osa2 = 'Tiedonvälitys propseilla'
-    const tehtavia2 = 7
-    const osa3 = 'Komponenttien tila'
-    const tehtavia3 = 14
+    const kurssi = {
+        nimi: 'Half Stack -sovelluskehitys',
+        osat: [
+            {
+                nimi: 'Reactin perusteet',
+                tehtavia: 10
+            },
+            {
+                nimi: 'Tiedonvälitys propseilla',
+                tehtavia: 7
+            },
+            {
+                nimi: 'Komponenttien tila',
+                tehtavia: 14
+            }
+        ]
+    }
 
     return (
         <div>
             <Otsikko kurssi={kurssi} />
-            <Sisalto o1={osa1} c1={tehtavia1} o2={osa2} c2={tehtavia2} o3={osa3} c3={tehtavia3} />
-            <Yhteensa count={tehtavia1 + tehtavia2 + tehtavia3} />
+            <Sisalto osat={kurssi.osat} />
+            <Yhteensa osat={kurssi.osat} />
         </div>
     )
 }
