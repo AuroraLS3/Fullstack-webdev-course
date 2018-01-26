@@ -15,23 +15,21 @@ class Stats extends Component {
     }
   }
 
-  hyva = () => () => {
-    this.setState({hyva: this.state.hyva + 1});
+  hyva = () => this.setState({hyva: this.state.hyva + 1});
+  neutraali = () => this.setState((prevState) => ({neutraali: prevState.neutraali + 1}));
+  huono = () => this.setState({huono: this.state.huono + 1});
 
-  }
-  neutraali = () => () => {
-    this.setState((prevState) => ({neutraali: prevState.neutraali + 1}));
-
-  }
-  huono = () => () => {
-    this.setState({huono: this.state.huono + 1});
-  }
+  nappi = [
+    this.hyva,
+    this.neutraali,
+    this.huono
+  ]
   
   render() {
     return <div>
-        <Nappi nimi="Hyvä" funk={this.hyva()} />
-        <Nappi nimi="Neutraali" funk={this.neutraali()} />
-        <Nappi nimi="Huono" funk={this.huono()} />
+        <Nappi nimi="Hyvä" funk={this.nappi[0]} />
+        <Nappi nimi="Neutraali" funk={this.nappi[1]} />
+        <Nappi nimi="Huono" funk={this.nappi[2]} />
         <Statistics state={this.state} />
       </div>
   }
