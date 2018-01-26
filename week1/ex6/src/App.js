@@ -26,40 +26,58 @@ class Stats extends Component {
   huono = () => () => {
     this.setState({huono: this.state.huono + 1});
   }
-
-  laskeKeskiarvo = () => {
-    const good = this.state.hyva
-    const neut = this.state.neutraali
-    const bad = this.state.huono
-    const total = good + neut + bad
-    return total === 0 ? 0 : ((good - bad) / total).toFixed(2)
-  }
-
-  laskePositiiviset = () => {
-    const good = this.state.hyva
-    const neut = this.state.neutraali
-    const bad = this.state.huono
-    const total = good + neut + bad
-    return total === 0 ? 0 : ((good / total) * 100).toFixed(2)
-  }
-
+  
   render() {
-    const hyva = this.state.hyva
-    const neutraali = this.state.neutraali
-    const huono = this.state.huono
-    const keskiarvo = this.state.keskiarvo
     return <div>
         <Nappi nimi="Hyvä" funk={this.hyva()} />
         <Nappi nimi="Neutraali" funk={this.neutraali()} />
         <Nappi nimi="Huono" funk={this.huono()} />
-        <StatsTitle />
-        <p>Hyvä: {hyva}</p>
-        <p>Neutraali: {neutraali}</p>
-        <p>Huono: {huono}</p>
-        <p>Keskiarvo: {this.laskeKeskiarvo()}</p> 
-        <p>Positiivisia: {this.laskePositiiviset()}%</p>
+        <Statistics state={this.state} />
       </div>
   }
+}
+
+const Statistics = (props) => {
+  const hyva = props.state.hyva
+  const neutraali = props.state.neutraali
+  const huono = props.state.huono
+  const total = hyva + neutraali + huono
+
+  return <div>
+    <StatsTitle />
+    <Stat text={'Hyvä'} value={hyva}/>
+    <Stat text={'Neutraali'} value={neutraali}/>
+    <Stat text={'Huono'} value={huono}/>
+    <Keskiarvo state={props.state} total={total} />
+    <Positiiviset state={props.state} total={total} />
+  </div>
+}
+
+const Stat = (props) => {
+  return <p>{props.text}: {props.value}</p>
+}
+
+const Positiiviset = (props) => {
+  const hyva = props.state.hyva
+  const total = props.total
+
+  this.laskePositiiviset = () => {
+    return total === 0 ? 0 : ((hyva / total) * 100).toFixed(2)
+  }
+
+  return <Stat text={"Positiivisia"} value={this.laskePositiiviset()+'%'}/>
+}
+
+const Keskiarvo = (props) => {
+  const hyva = props.state.hyva
+  const huono = props.state.huono
+  const total = props.total
+
+  this.laskeKeskiarvo = () => {
+    return total === 0 ? 0 : ((hyva - huono) / total).toFixed(2)
+  }
+
+  return <Stat text={"Keskiarvo"} value = {this.laskeKeskiarvo()} />
 }
 
 const Nappi = (props) => {
