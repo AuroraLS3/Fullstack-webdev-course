@@ -43,6 +43,9 @@ const Statistics = (props) => {
   const huono = props.state.huono
   const total = hyva + neutraali + huono
 
+  if (total === 0) {
+    return <div><p>Yhtään palautetta ei annettu.</p></div>
+  }
   return <div>
     <StatsTitle />
     <Stat text={'Hyvä'} value={hyva}/>
