@@ -48,16 +48,18 @@ const Statistics = (props) => {
   }
   return <div>
     <StatsTitle />
+    <table><tbody>
     <Stat text={'Hyvä'} value={hyva}/>
     <Stat text={'Neutraali'} value={neutraali}/>
     <Stat text={'Huono'} value={huono}/>
     <Keskiarvo state={props.state} total={total} />
     <Positiiviset state={props.state} total={total} />
+    </tbody></table>
   </div>
 }
 
 const Stat = (props) => {
-  return <p>{props.text}: {props.value}</p>
+  return <tr><td>{props.text}</td><td>{props.value}</td></tr>
 }
 
 const Positiiviset = (props) => {
