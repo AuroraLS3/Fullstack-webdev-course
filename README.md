@@ -3,5 +3,6 @@ Personal answer repository for FullStack -webdevelopment course in University of
 
 ## Answers
 
-- [Week 0](week0/check.md)
-- [Week 1](week1/check.md)
+- [Part 0](part0)
+- [Part 1](part1)
+- [Part 2](part2)
