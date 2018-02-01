@@ -26,3 +26,12 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.msg {
+  color: green;
+  background: #a5ce7d;
+  font-size: 20px;
+  border-style: solid;
+  padding: 10px;
+  margin-bottom: 10px;
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import Numerot from './Numerot'
-import axios from 'axios'
+import Notification from './Notification'
+import personsService from './services/persons.js'
 
 class App extends React.Component {
   constructor(props) {
@@ -10,12 +11,21 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      search: ''
+      search: '',
+
+      message: null
     }
   }
 
+  setMsg = (msg) => {
+    this.setState({message: msg})
+    setTimeout(() => {
+      this.setState({message: null})
+    }, 5000)
+  }
+
   componentDidMount() {
-    axios.get('http://localhost:3001/persons')
+    personsService.getAll()
     .then(response => {
       this.setState({persons: response.data})
     })
@@ -27,10 +37,20 @@ class App extends React.Component {
     const newName = this.state.newName
     const newNumber = this.state.newNumber
 
-    const onkoTiedossa = this.state.persons.filter(person => person.name === newName).length > 0
+    const tiedetty = this.state.persons.filter(person => person.name === newName)
 
-    if (onkoTiedossa) {
-      alert('Nimi on jo käytössä!')
+    if (tiedetty.length > 0) {
+      const person = tiedetty[0]
+      if (window.confirm(person.name+' löytyy jo, päivitetäänkö numero?')) {
+        person.number = newNumber
+        
+        personsService.update(person)
+        .then(response => {
+          const newPersons = this.state.persons
+          this.setState({persons: newPersons})
+          this.setMsg('Numero päivitetty!')
+        })
+      }
       return;
     }
 
@@ -39,9 +59,13 @@ class App extends React.Component {
       number: newNumber
     }
 
-    const persons = this.state.persons.concat(newPerson)
-  
-    this.setState({persons: persons, newName: '', newNumber: ''})
+    personsService.create(newPerson)
+    .then(response => {
+      newPerson.id = response.data.id
+      const persons = this.state.persons.concat(newPerson)
+        this.setState({persons: persons, newName: '', newNumber: ''})
+        this.setMsg('Numero lisätty!')
+      })
   }
 
   handleNameChange = (event) => {
@@ -59,9 +83,25 @@ class App extends React.Component {
     this.setState({search: uusi})
   }
 
+  poista = (person) => () => {
+    if (window.confirm('Poistetaanko '+person.name+'?')) {
+      personsService.remove(person.id)
+      .then(response => {
+        const newPersons = this.state.persons.filter(p => p.id !== person.id)
+        this.setState({persons: newPersons})
+        this.setMsg('Numero poistettu!')
+      }).catch(error => {
+        const newPersons = this.state.persons.filter(p => p.id !== person.id)
+        this.setState({persons: newPersons})
+        this.setMsg('Numero oli jo poistettu!')
+      })
+    }
+  }
+
   render() {
     return (
       <div>
+        <Notification message={this.state.message} />
         <h2>Puhelinluettelo</h2>
         <form onSubmit={this.submit}>
         <div>
@@ -93,7 +133,7 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-        <Numerot search={this.state.search} persons={this.state.persons} />
+        <Numerot poista={this.poista} search={this.state.search} persons={this.state.persons} />
       </div>
     )
   }
