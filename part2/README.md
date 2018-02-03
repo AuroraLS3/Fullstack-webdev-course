@@ -10,4 +10,4 @@
 
 ### 2.12 & 2.13
 
-[Countries folder](https://github.com/Rsl1122/Fullstack-webdev-course/tree/master/part2/countries)
+Not done.
