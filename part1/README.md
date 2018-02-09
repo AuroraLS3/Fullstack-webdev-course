@@ -1,4 +1,4 @@
-# Answers to Week 1
+# Answers to Part 1
 
 ### 1.1 - 1.5
 
