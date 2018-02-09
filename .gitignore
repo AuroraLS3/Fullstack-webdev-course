@@ -1,5 +1,7 @@
 week1/osa1
 
+node_modules
+
 ### OSX ###
 .DS_Store
 .AppleDouble
