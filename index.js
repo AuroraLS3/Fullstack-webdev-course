@@ -78,11 +78,11 @@ app.post('/api/persons', (req, res) => {
     const person = {
         name: body.name,
         number: body.number,
-        id: random()
+        id: Number(random())
     }
     persons = persons.concat(body)
 
-    res.json(body)
+    res.json(person)
 })
 
 app.get('/info', (req, res) => {
