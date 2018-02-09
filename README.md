@@ -1,8 +1,10 @@
 # Fullstack-webdev-course
-Personal answer repository for FullStack -webdevelopment course in University of Helsinki
 
-## Answers
+## Part 3 Backend
 
-- [Part 0](part0)
-- [Part 1](part1)
-- [Part 2](part2)
+This branch only contains part 3 backend to allow heroku deployment.
+
+- [Access Backend App on Heroku](https://fullstack-rsl-phonebook.herokuapp.com/)
+
+
+To view all answers swap to master branch.
