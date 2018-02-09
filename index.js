@@ -80,7 +80,7 @@ app.post('/api/persons', (req, res) => {
         number: body.number,
         id: Number(random())
     }
-    persons = persons.concat(body)
+    persons = persons.concat(person)
 
     res.json(person)
 })
