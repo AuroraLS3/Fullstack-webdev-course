@@ -87,6 +87,7 @@ class App extends React.Component {
     if (window.confirm('Poistetaanko '+person.name+'?')) {
       personsService.remove(person.id)
       .then(response => {
+        console.log(person)
         const newPersons = this.state.persons.filter(p => p.id !== person.id)
         this.setState({persons: newPersons})
         this.setMsg('Numero poistettu!')
