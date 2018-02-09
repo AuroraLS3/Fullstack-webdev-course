@@ -7,11 +7,7 @@ const cors = require('cors')
 app.use(cors())
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
-
-
-app.get('/', (req, res) => {
-    res.send('<p>No API endpoint in this address.</p>')
-})
+app.use(express.static('build'))
 
 let persons = [
     {
