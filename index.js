@@ -58,20 +58,26 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({ error: 'number missing' })
     }
 
-    const found = persons.find(saved => body.name === saved.name)
-    if (found) {
-        return res.status(400).json({ error: 'name must be unique' })
-    }
+    Person.find({})
+        .then(result => {
+            const found = result.find(saved => body.name === saved.name)
+            if (found) {
+                return res.status(400).json({ error: 'name must be unique' })
+            }
 
-    new Person({
-        name: body.name,
-        number: body.number
-    }).save().then(result => {
-        res.json(Person.format(result))
-    }).catch(error => {
-        console.log(error)
-        res.status(400).send({ error: 'malformatted id' })
-    })
+            new Person({
+                name: body.name,
+                number: body.number
+            }).save().then(result => {
+                res.json(Person.format(result))
+            }).catch(error => {
+                console.log(error)
+                res.status(400).send({ error: 'malformatted id' })
+            })
+        }).catch(error => {
+            console.log(error)
+            res.status(400).send({ error: 'malformatted id' })
+        })
 })
 
 app.get('/info', (req, res) => {
