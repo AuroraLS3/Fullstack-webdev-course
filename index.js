@@ -3,38 +3,41 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
+
+require('dotenv').config()
+
+const url = process.env.MONGODB_URI
+
+mongoose.connect(url)
+
+const Person = mongoose.model('Person', {
+    name: String,
+    number: String
+})
 
 app.use(cors())
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
 app.use(express.static('build'))
 
-let persons = [
-    {
-        name: "Arto Hellas",
-        number: "040-123456",
-        id: 1
-    },
-    {
-        name: "Matti Tienari",
-        number: "040-123456",
-        id: 2
-    },
-    {
-        name: "Arto Järvinen",
-        number: "040-123456",
-        id: 3
-    },
-    {
-        name: "Lea Kutvonen",
-        number: "040-123456",
-        id: 4
-    }
-]
+let persons = []
 
-random = () => {
-    return Math.floor(Math.random() * (10000))
+const formatPerson = (person) => {
+    return {
+        name: person.name,
+        number: person.number,
+        id: person._id
+    }
 }
+
+Person.find({})
+    .then(result => {
+        result.forEach(person => {
+            persons.concat(formatPerson(person))
+        })
+        mongoose.connection.close()
+    })
 
 app.get('/api/persons', (req, res) => {
     res.json(persons)
@@ -42,17 +45,17 @@ app.get('/api/persons', (req, res) => {
 
 app.get('/api/persons/:id', (req, res) => {
     const id = req.params.id
-    const person = persons.find(person => person.id == id)
+    const person = persons.find(person => person.id === id)
     if (person) {
         res.json(person)
-    } else  {
+    } else {
         res.status(404).end()
     }
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    persons  = persons.filter(person => person.id !== id)
+    const id = req.params.id
+    persons = persons.filter(person => person.id !== id)
     res.status(204).end()
 })
 
@@ -60,26 +63,27 @@ app.post('/api/persons', (req, res) => {
     const body = req.body
 
     if (body.name === undefined) {
-        return res.status(400).json({error: 'name missing'})
+        return res.status(400).json({ error: 'name missing' })
     }
 
     if (body.number === undefined) {
-        return res.status(400).json({error: 'number missing'})
+        return res.status(400).json({ error: 'number missing' })
     }
 
     const found = persons.find(saved => body.name === saved.name)
     if (found) {
-        return res.status(400).json({error: 'name must be unique'})
+        return res.status(400).json({ error: 'name must be unique' })
     }
 
-    const person = {
+    new Person({
         name: body.name,
-        number: body.number,
-        id: Number(random())
-    }
-    persons = persons.concat(person)
-
-    res.json(person)
+        number: body.number
+    }).save().then(result => {
+        const saved = formatPerson(result)
+        persons = persons.concat(saved)
+        res.json(saved)
+        mongoose.connection.close()
+    })
 })
 
 app.get('/info', (req, res) => {
