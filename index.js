@@ -3,58 +3,48 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
 
-require('dotenv').config()
 
-const url = process.env.MONGODB_URI
-
-mongoose.connect(url)
-
-const Person = mongoose.model('Person', {
-    name: String,
-    number: String
-})
-
-Person.format = function (person) {
-    return {
-        name: person.name,
-        number: person.number,
-        id: person._id
-    }
-}
+const Person = require('.models/person')
 
 app.use(cors())
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
 app.use(express.static('build'))
 
-let persons = []
-
-Person.find({})
-    .then(result => {
-        persons = result.map(Person.format)
-        mongoose.connection.close()
-    })
-
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({})
+        .then(result => {
+            res.json(result.map(Person.format))
+        }).catch(error => {
+            console.log(error)
+            res.status(400).send({ error: 'malformatted id' })
+        })
 })
 
 app.get('/api/persons/:id', (req, res) => {
     const id = req.params.id
-    const person = persons.find(person => person.id === id)
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+
+    Person.findById(id).then(person => {
+        if (person) {
+            res.json(Person.format(person))
+        } else {
+            res.status(404).end()
+        }
+    }).catch(error => {
+        console.log(error)
+        res.status(400).send({ error: 'malformatted id' })
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
     const id = req.params.id
-    persons = persons.filter(person => person.id !== id)
-    res.status(204).end()
+    Person.findByIdAndRemove(id).then(result => {
+        res.status(204).end()
+    }).catch(error => {
+        console.log(error)
+        res.status(400).send({ error: 'malformatted id' })
+    })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -77,22 +67,29 @@ app.post('/api/persons', (req, res) => {
         name: body.name,
         number: body.number
     }).save().then(result => {
-        const saved = Person.format(result)
-        persons = persons.concat(saved)
-        res.json(saved)
-        mongoose.connection.close()
+        res.json(Person.format(result))
+    }).catch(error => {
+        console.log(error)
+        res.status(400).send({ error: 'malformatted id' })
     })
 })
 
 app.get('/info', (req, res) => {
-    res.send(
-        `<p>
-            Puhelinluettelossa on ${persons.length} henkilöä
-        </p>
-        <p>
-            ${new Date().toUTCString()}
-        </p>`
-    )
+    Person.find({})
+        .then(result => {
+            const howMany = result.length
+            res.send(
+                `<p>
+                    Puhelinluettelossa on ${howMany} henkilöä
+                </p>
+                <p>
+                    ${new Date().toUTCString()}
+                </p>`
+            )
+        }).catch(error => {
+            console.log(error)
+            res.status(400).send({ error: 'malformatted id' })
+        })
 })
 
 
