@@ -16,14 +16,7 @@ const Person = mongoose.model('Person', {
     number: String
 })
 
-app.use(cors())
-app.use(morgan('tiny'))
-app.use(bodyParser.json())
-app.use(express.static('build'))
-
-let persons = []
-
-const formatPerson = (person) => {
+Person.format = function (person) {
     return {
         name: person.name,
         number: person.number,
@@ -31,11 +24,16 @@ const formatPerson = (person) => {
     }
 }
 
+app.use(cors())
+app.use(morgan('tiny'))
+app.use(bodyParser.json())
+app.use(express.static('build'))
+
+let persons = []
+
 Person.find({})
     .then(result => {
-        result.forEach(person => {
-            persons.concat(formatPerson(person))
-        })
+        persons = result.map(Person.format)
         mongoose.connection.close()
     })
 
@@ -79,7 +77,7 @@ app.post('/api/persons', (req, res) => {
         name: body.name,
         number: body.number
     }).save().then(result => {
-        const saved = formatPerson(result)
+        const saved = Person.format(result)
         persons = persons.concat(saved)
         res.json(saved)
         mongoose.connection.close()
