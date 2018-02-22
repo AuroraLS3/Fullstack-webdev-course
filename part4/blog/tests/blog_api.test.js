@@ -59,6 +59,27 @@ test('correct blog is added with no likes', async () => {
     expect(added.likes).toBe(0)
 })
 
+test('no blog with undefined title', async () => {
+    await api.post('/api/blogs')
+    .send(testBlogs.newBlog_noTitle)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+})
+
+test('no blog with undefined author', async () => {
+    await api.post('/api/blogs')
+    .send(testBlogs.newBlog_noAuthor)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+})
+
+test('no blog with undefined url', async () => {
+    await api.post('/api/blogs')
+    .send(testBlogs.newBlog_noUrl)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+})
+
 afterAll(() => {
     server.close()
 })
