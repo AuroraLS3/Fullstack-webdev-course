@@ -1,3 +1,5 @@
+const config = require('./utils/config')
+
 const http = require('http')
 const express = require('express')
 const app = express()
@@ -5,13 +7,12 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 const mongoose = require('mongoose')
-require('dotenv').config()
 
-const url = process.env.MONGODB_URI
+const url = config.mongoUrl
 
 mongoose.connect(url)
   .then( () => {
-    console.log('Database Established', process.env.MONGODB_URI)
+    console.log('Database Established', url)
   })
   .catch( error => {
     console.log(error)
@@ -24,7 +25,18 @@ const blogRouter = require('./controllers/blogs')
 
 app.use('/api/blogs', blogRouter)
 
-const PORT = process.env.PORT || 3003
-app.listen(PORT, () => {
+const PORT = config.port
+
+const server = http.createServer(app)
+
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+server.on('close', () => {
+  mongoose.connection.close()
+})
+
+module.exports = {
+  app, server
+}
