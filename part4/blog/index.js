@@ -3,18 +3,23 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
+
 const mongoose = require('mongoose')
-
-const Blog = require('./models/blog')
-
-app.use(cors())
-app.use(bodyParser.json())
-
 require('dotenv').config()
 
 const url = process.env.MONGODB_URI
 
 mongoose.connect(url)
+  .then( () => {
+    console.log('Database Established', process.env.MONGODB_URI)
+  })
+  .catch( error => {
+    console.log(error)
+  })
+
+app.use(cors())
+app.use(bodyParser.json())
+
 const blogRouter = require('./controllers/blogs')
 
 app.use('/api/blogs', blogRouter)
