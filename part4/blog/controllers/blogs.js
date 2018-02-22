@@ -23,11 +23,11 @@ blogRouter.post('/', (req, res) => {
     }
 
     if (!blog.author) {
-        res.status(400).send({ error: 'no author'})
+        return res.status(400).send({ error: 'no author'})
     }
 
     if (!blog.url) {
-        res.status(400).send({ error: 'no url'})
+        return res.status(400).send({ error: 'no url'})
     }
 
     blog.save()
@@ -37,6 +37,28 @@ blogRouter.post('/', (req, res) => {
             console.log(error)
             res.status(400).send({ error: 'malformatted id' })
         })
+})
+
+blogRouter.delete('/:id', async (req, res) => {
+    try {
+        await Blog.findByIdAndRemove(req.params.id)
+        
+        res.status(204).end()
+    } catch (ex) {
+        console.log(ex)
+        res.status(400).send({ error: 'malformatted id' })
+    }
+})
+
+blogRouter.get('/:id', async (req, res) => {
+    try {
+        const result = await Blog.findById(req.params.id)
+        
+        res.status(200).send(result)
+    } catch (ex) {
+        console.log(ex)
+        res.status(400).send({ error: 'malformatted id' })
+    }
 })
 
 module.exports = blogRouter
