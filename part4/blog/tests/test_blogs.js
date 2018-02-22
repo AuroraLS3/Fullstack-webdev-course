@@ -56,7 +56,14 @@ const newBlog = {
     likes: 0
 }
 
+const newBlog_noLikes = {
+    title: "TestBlog_noLikes",
+    author: "Unknown",
+    url: "No link"
+}
+
 module.exports = {
     blogs,
-    newBlog
+    newBlog,
+    newBlog_noLikes
 }

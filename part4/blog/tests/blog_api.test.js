@@ -45,6 +45,20 @@ test('blog is added', async () => {
     expect(contents).toContain(testBlogs.newBlog.title)
 })
 
+test('correct blog is added with no likes', async () => {
+    await api.post('/api/blogs')
+    .send(testBlogs.newBlog_noLikes)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const added = response.body[initialBlogs.length+1]
+
+    expect(added.title).toEqual(testBlogs.newBlog_noLikes.title)
+    expect(added.likes).toBe(0)
+})
+
 afterAll(() => {
     server.close()
 })
