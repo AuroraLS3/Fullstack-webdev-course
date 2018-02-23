@@ -1,4 +1,5 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const format = (blog) => {
     return Blog.format(blog)
@@ -14,8 +15,14 @@ const blogCountInDB = async () => {
     return blogs.length
 }
 
+const usersInDB = async () => {
+    const users = await User.find({})
+    return users
+}
+
 module.exports = {
     format, 
     blogsInDB,
-    blogCountInDB
+    blogCountInDB,
+    usersInDB
 }

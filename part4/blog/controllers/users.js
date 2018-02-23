@@ -10,12 +10,12 @@ usersRouter.post('/', async (req, res) => {
 
         const pass = body.password
 
-        if (pass.length < 3) {
+        if (!pass || pass.length < 3) {
             return res.status(400).json({ error: 'Password must be at least 3 characters.'})
         }
 
-        const user = body.username
-        const found = await User.findOne({ 'username': user})
+        const username = body.username
+        const found = await User.findOne({ 'username': username})
 
         if (found) {
             return res.status(400).json({ error: 'Username is already in use.'})
@@ -23,10 +23,7 @@ usersRouter.post('/', async (req, res) => {
 
         const hash = await bcrypt.hash(pass, saltRounds)
   
-        const adult = body.adult
-        if (adult !== true || adult !== false) {
-            adult = true
-        }
+        let adult = body.adult === undefined ? true : body.adult 
 
         const user = new User({
             username: body.username,
@@ -37,7 +34,7 @@ usersRouter.post('/', async (req, res) => {
   
         const savedUser = await user.save()
   
-        res.json(savedUser)
+        res.status(201).json(savedUser)
     } catch (ex) {
         console.log(ex)
         res.status(500).json({ error: 'Error occurred' })
