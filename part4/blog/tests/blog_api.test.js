@@ -84,6 +84,29 @@ test('no blog with undefined url', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+test('blog is deleted', async () => {
+    const before = await utils.blogCountInDB()
+
+    const response = await api.post('/api/blogs')
+    .send(testBlogs.newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    let now = await utils.blogCountInDB()
+
+    expect(now).toBe(before + 1)
+
+    const blogs = await utils.blogsInDB()
+    const toRemove = blogs[0].id
+
+    await api.delete('/api/blogs/'+ toRemove)
+    .expect(204)
+
+    now = await utils.blogCountInDB()
+
+    expect(now).toBe(before)
+})
+
 afterAll(() => {
     server.close()
 })
