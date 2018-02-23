@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt')
-const usersRouter = require('express').Router()
+const router = require('express').Router()
 const User = require('../models/user')
 
-usersRouter.post('/', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const body = req.body
   
@@ -23,7 +23,7 @@ usersRouter.post('/', async (req, res) => {
 
         const hash = await bcrypt.hash(pass, saltRounds)
   
-        let adult = body.adult === undefined ? true : body.adult 
+        let adult = body.adult === undefined || body.adult 
 
         const user = new User({
             username: body.username,
@@ -41,9 +41,11 @@ usersRouter.post('/', async (req, res) => {
     }
 })
 
-usersRouter.get('/', async (req, res) => {
-    const users = await User.find({})
+router.get('/', async (req, res) => {
+    const users = await User
+        .find({})
+        .populate('blogs')
     res.json(users.map(User.format))
   })
 
-module.exports = usersRouter
+module.exports = router

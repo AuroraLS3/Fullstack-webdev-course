@@ -1,17 +1,21 @@
-const blogRouter = require('express').Router()
+const router = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
-blogRouter.get('/', (req, res) => {
-    Blog.find({})
-        .then(blogs => {
-            res.json(blogs)
-        }).catch(error => {
-            console.log(error)
-            res.status(400).send({ error: 'malformatted id' })
-        })
+router.get('/', async (req, res) => {
+    try {
+        const blogs = await Blog
+            .find({})
+            .populate('user', { username: 1, name: 1, adult: 1 })
+    
+        res.json(blogs)
+    } catch(error) {
+        console.log(error)
+        res.status(400).send({ error: 'malformatted id' })
+    }
 })
 
-blogRouter.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const blog = new Blog(req.body)
 
     if (!blog.likes) {
@@ -30,16 +34,22 @@ blogRouter.post('/', (req, res) => {
         return res.status(400).send({ error: 'no url'})
     }
 
-    blog.save()
-        .then(result => {
-            res.status(201).json(result)
-        }).catch(error => {
-            console.log(error)
-            res.status(400).send({ error: 'malformatted id' })
-        })
+    try {
+        const user = await User.findOne()
+        blog.user = user._id
+        const savedBlog = await blog.save()
+
+        user.blogs = user.blogs.concat(savedBlog._id)
+        await user.save()
+    
+        res.status(201).json(savedBlog)
+    } catch(error) {
+        console.log(error)
+        res.status(400).send({ error: 'Error occurred' })
+    }
 })
 
-blogRouter.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         await Blog.findByIdAndRemove(req.params.id)
         
@@ -50,7 +60,7 @@ blogRouter.delete('/:id', async (req, res) => {
     }
 })
 
-blogRouter.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const result = await Blog.findById(req.params.id)
         
@@ -61,4 +71,4 @@ blogRouter.get('/:id', async (req, res) => {
     }
 })
 
-module.exports = blogRouter
+module.exports = router

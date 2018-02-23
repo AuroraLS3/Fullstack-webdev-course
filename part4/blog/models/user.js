@@ -4,7 +4,8 @@ const User = mongoose.model('User', {
     username: String,
     name: String,
     password: String,
-    adult: Boolean
+    adult: Boolean,
+    blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog'}]
 })
 
 User.format = (user) => {
