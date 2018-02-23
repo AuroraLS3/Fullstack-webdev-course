@@ -7,12 +7,32 @@ usersRouter.post('/', async (req, res) => {
         const body = req.body
   
         const saltRounds = 10
-        const hash = await bcrypt.hash(body.password, saltRounds)
+
+        const pass = body.password
+
+        if (pass.length < 3) {
+            return res.status(400).json({ error: 'Password must be at least 3 characters.'})
+        }
+
+        const user = body.username
+        const found = await User.findOne({ 'username': user})
+
+        if (found) {
+            return res.status(400).json({ error: 'Username is already in use.'})
+        }
+
+        const hash = await bcrypt.hash(pass, saltRounds)
   
+        const adult = body.adult
+        if (adult !== true || adult !== false) {
+            adult = true
+        }
+
         const user = new User({
             username: body.username,
             name: body.name,
-            hash
+            adult: adult,
+            password: hash
         })
   
         const savedUser = await user.save()
