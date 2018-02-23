@@ -55,6 +55,37 @@ const mostBlogs = (blogs) => {
     }
 }
 
+const mostLikes = (blogs) => {
+    let authors = {}
+
+    blogs.forEach(blog => {
+        const auth = blog.author
+        let likeCount = authors[auth]
+        if (!likeCount) {
+            likeCount = 0
+        }
+        likeCount += blog.likes
+        authors[auth] = likeCount
+    })
+
+    let likeCount = 0
+    let bestAuth
+
+    let author
+    for (author in authors) {
+        const count = authors[author]
+        if (count >= likeCount) {
+            likeCount = count
+            bestAuth = author
+        }
+    }
+
+    return {
+        author: bestAuth,
+        likes: likeCount
+    }
+}
+
 module.exports = {
     dummy,
     totalLikes,

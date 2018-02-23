@@ -45,6 +45,17 @@ describe('Test lost_helper', () => {
                 expect(result).toEqual(expected)
             })
         })
+
+        describe('Most Likes Test', () => {
+            test('correct author returned', () => {
+                const result = lostHelper.mostBlogs(blogs)
+                const expected = {
+                    author: "Edsger W. Dijkstra",
+                    likes: 17
+                }
+                expect(result).toEqual(expected)
+            })
+        })
     })
 })
 
