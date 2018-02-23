@@ -1,13 +1,7 @@
 const Blog = require('../models/blog')
 
 const format = (blog) => {
-    return {
-        title: blog.title,
-        author: blog.author,
-        url: blog.url,
-        likes: blog.likes,
-        id: blog._id
-    }
+    return Blog.format(blog)
 }
 
 const blogsInDB = async () => {

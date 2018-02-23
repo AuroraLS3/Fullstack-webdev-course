@@ -7,4 +7,14 @@ const Blog = mongoose.model('Blog', {
     likes: Number
 })
 
+Blog.format = (blog) => {
+    return {
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes,
+        id: blog._id
+    }
+}
+
 module.exports = Blog

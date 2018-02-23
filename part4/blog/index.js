@@ -22,8 +22,10 @@ app.use(cors())
 app.use(bodyParser.json())
 
 const blogRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', usersRouter)
 
 const PORT = config.port
 
