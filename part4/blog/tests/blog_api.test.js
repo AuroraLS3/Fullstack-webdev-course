@@ -5,10 +5,12 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 
 const testBlogs = require('./test_blogs')
-const initialBlogs = testBlogs.blogs
+const utils = require('./test_utils')
 
 beforeAll(async () => {
     await Blog.remove({})
+
+    const initialBlogs = testBlogs.blogs
 
     let blogObj 
     for (let i = 0; i < initialBlogs.length; i++) {
@@ -25,13 +27,17 @@ test('blogs are returned as json', async () => {
 })
 
 test('all blogs are returned', async () => {
+    const currentlyInDB = await utils.blogCountInDB()
+
     const response = await api
       .get('/api/blogs')
   
-    expect(response.body.length).toBe(initialBlogs.length)
+    expect(response.body.length).toBe(currentlyInDB)
 })
 
 test('blog is added', async () => {
+    const before = await utils.blogCountInDB()
+
     await api.post('/api/blogs')
     .send(testBlogs.newBlog)
     .expect(201)
@@ -41,19 +47,17 @@ test('blog is added', async () => {
 
     const contents = response.body.map(r => r.title)
 
-    expect(response.body.length).toBe(initialBlogs.length + 1)
+    expect(response.body.length).toBe(before + 1)
     expect(contents).toContain(testBlogs.newBlog.title)
 })
 
-test('correct blog is added with no likes', async () => {
-    await api.post('/api/blogs')
+test('correct blog is added with no likes', async () => {    
+    const response = await api.post('/api/blogs')
     .send(testBlogs.newBlog_noLikes)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
-
-    const added = response.body[initialBlogs.length+1]
+    const added = response.body
 
     expect(added.title).toEqual(testBlogs.newBlog_noLikes.title)
     expect(added.likes).toBe(0)
