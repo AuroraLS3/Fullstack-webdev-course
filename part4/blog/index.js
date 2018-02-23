@@ -23,9 +23,11 @@ app.use(bodyParser.json())
 
 const blogRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 
 const PORT = config.port
 
