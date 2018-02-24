@@ -66,8 +66,26 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        await Blog.findByIdAndRemove(req.params.id)
+        const token = req.token
+        const decodedToken = jwt.verify(token, config.secret)
 
+        if (!token || !decodedToken.id) {
+            return response.status(401).json({ error: 'token missing or invalid' })
+        }
+
+        const user = await User.findById(decodedToken.id)
+
+        if (!user) {
+            return res.status(401).send({ error: 'Invalid user token' })
+        }
+
+        const blog = await Blog.findById(req.params.id)
+
+        if (blog.user.toString() !== user._id.toString()) {
+            return res.status(403).send({ error: 'User did not add this blog' })
+        }
+
+        await blog.remove()
         res.status(204).end()
     } catch (ex) {
         console.log(ex)
