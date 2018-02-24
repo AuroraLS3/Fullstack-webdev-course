@@ -6,6 +6,8 @@ const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
+const tokenMiddleware = require('./utils/token')
+
 const mongoose = require('mongoose')
 
 const url = config.mongoUrl
@@ -20,6 +22,7 @@ mongoose.connect(url)
 
 app.use(cors())
 app.use(bodyParser.json())
+app.use(tokenMiddleware)
 
 const blogRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')

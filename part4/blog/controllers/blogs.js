@@ -2,6 +2,8 @@ const router = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const config = require('../utils/config')
+
 router.get('/', async (req, res) => {
     try {
         const blogs = await Blog
@@ -16,6 +18,20 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
+
+    const token = req.token
+    const decodedToken = jwt.verify(token, config.secret)
+
+    if (!token || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+
+    if (!user) {
+        return res.status(401).send({ error: 'Invalid user token' })
+    }
+
     const blog = new Blog(req.body)
 
     if (!blog.likes) {
@@ -35,7 +51,6 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const user = await User.findOne()
         blog.user = user._id
         const savedBlog = await blog.save()
 
@@ -96,7 +111,7 @@ router.put('/:id', async (req, res) => {
         }
 
         const updatedNote = await Blog
-            .findByIdAndUpdate(req.params.id, blog, {new: true})
+            .findByIdAndUpdate(req.params.id, blog, { new: true })
 
         res.status(200).send(updatedNote)
     } catch (ex) {
