@@ -12,99 +12,117 @@ beforeAll(async () => {
 
     const initialBlogs = testBlogs.blogs
 
-    let blogObj 
+    let blogObj
     for (let i = 0; i < initialBlogs.length; i++) {
         blogObj = new Blog(initialBlogs[i])
         await blogObj.save()
     }
 })
 
-test('blogs are returned as json', async () => {
-    await api
-      .get('/api/blogs')
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-})
+describe('Test Blogs API', () => {
+    test('blogs are returned as json', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
 
-test('all blogs are returned', async () => {
-    const currentlyInDB = await utils.blogCountInDB()
+    test('all blogs are returned', async () => {
+        const currentlyInDB = await utils.blogCountInDB()
 
-    const response = await api
-      .get('/api/blogs')
-  
-    expect(response.body.length).toBe(currentlyInDB)
-})
+        const response = await api
+            .get('/api/blogs')
 
-test('blog is added', async () => {
-    const before = await utils.blogCountInDB()
+        expect(response.body.length).toBe(currentlyInDB)
+    })
 
-    await api.post('/api/blogs')
-    .send(testBlogs.newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    test('blog is added', async () => {
+        const before = await utils.blogCountInDB()
 
-    const response = await api.get('/api/blogs')
+        await api.post('/api/blogs')
+            .send(testBlogs.newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
 
-    const contents = response.body.map(r => r.title)
+        const response = await api.get('/api/blogs')
 
-    expect(response.body.length).toBe(before + 1)
-    expect(contents).toContain(testBlogs.newBlog.title)
-})
+        const contents = response.body.map(r => r.title)
 
-test('correct blog is added with no likes', async () => {    
-    const response = await api.post('/api/blogs')
-    .send(testBlogs.newBlog_noLikes)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+        expect(response.body.length).toBe(before + 1)
+        expect(contents).toContain(testBlogs.newBlog.title)
+    })
 
-    const added = response.body
+    test('correct blog is added with no likes', async () => {
+        const response = await api.post('/api/blogs')
+            .send(testBlogs.newBlog_noLikes)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
 
-    expect(added.title).toEqual(testBlogs.newBlog_noLikes.title)
-    expect(added.likes).toBe(0)
-})
+        const added = response.body
 
-test('no blog with undefined title', async () => {
-    await api.post('/api/blogs')
-    .send(testBlogs.newBlog_noTitle)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
-})
+        expect(added.title).toEqual(testBlogs.newBlog_noLikes.title)
+        expect(added.likes).toBe(0)
+    })
 
-test('no blog with undefined author', async () => {
-    await api.post('/api/blogs')
-    .send(testBlogs.newBlog_noAuthor)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
-})
+    test('no blog with undefined title', async () => {
+        await api.post('/api/blogs')
+            .send(testBlogs.newBlog_noTitle)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    })
 
-test('no blog with undefined url', async () => {
-    await api.post('/api/blogs')
-    .send(testBlogs.newBlog_noUrl)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
-})
+    test('no blog with undefined author', async () => {
+        await api.post('/api/blogs')
+            .send(testBlogs.newBlog_noAuthor)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    })
 
-test('blog is deleted', async () => {
-    const before = await utils.blogCountInDB()
+    test('no blog with undefined url', async () => {
+        await api.post('/api/blogs')
+            .send(testBlogs.newBlog_noUrl)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    })
 
-    const response = await api.post('/api/blogs')
-    .send(testBlogs.newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    test('blog is deleted', async () => {
+        const before = await utils.blogCountInDB()
 
-    let now = await utils.blogCountInDB()
+        const response = await api.post('/api/blogs')
+            .send(testBlogs.newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
 
-    expect(now).toBe(before + 1)
+        let now = await utils.blogCountInDB()
 
-    const blogs = await utils.blogsInDB()
-    const toRemove = blogs[0].id
+        expect(now).toBe(before + 1)
 
-    await api.delete('/api/blogs/'+ toRemove)
-    .expect(204)
+        const blogs = await utils.blogsInDB()
+        const toRemove = blogs[0].id
 
-    now = await utils.blogCountInDB()
+        await api.delete('/api/blogs/' + toRemove)
+            .expect(204)
 
-    expect(now).toBe(before)
+        now = await utils.blogCountInDB()
+
+        expect(now).toBe(before)
+    })
+
+    test('blog is updated', async () => {
+        let blogs = await utils.blogsInDB()
+        const updateBlog = blogs[0]
+
+        updateBlog.likes = 500
+
+        await api.put('/api/blogs/' + updateBlog.id)
+            .send(updateBlog)
+            .expect(200)
+
+        blogs = await utils.blogsInDB()
+        const updatedBlog = blogs[0]
+
+        expect(updateBlog.likes).toBe(500)
+    })
 })
 
 afterAll(() => {
