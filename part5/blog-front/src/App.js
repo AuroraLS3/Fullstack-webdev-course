@@ -4,6 +4,7 @@ import Notification from './components/Notification'
 import blogSvc from './services/blogs'
 
 import loginSvc from './services/login'
+import BlogCreationForm from './components/BlogCreationForm';
 
 class App extends React.Component {
   constructor(props) {
@@ -17,7 +18,8 @@ class App extends React.Component {
       //
       title: '',
       author: '',
-      url: ''
+      url: '',
+      visible: false
     }
   }
 
@@ -128,42 +130,8 @@ class App extends React.Component {
     }
   }
 
-  newBlogForm = () => {
-    return (
-    <div>
-      <h3>Create New</h3>
-      <form onSubmit={this.postBlog}>
-        <div>
-          Title: 
-          <input
-            type="text"
-            name="title"
-            value={this.state.title}
-            onChange={this.handleFieldChange}
-          />
-        </div>
-        <div>
-          Author: 
-          <input
-            type="text"
-            name="author"
-            value={this.state.author}
-            onChange={this.handleFieldChange}
-          />
-        </div>
-        <div>
-          Url: 
-          <input
-            type="text"
-            name="url"
-            value={this.state.url}
-            onChange={this.handleFieldChange}
-          />
-        </div>
-        <button type="submit">Create</button>
-      </form>
-    </div>
-    )
+  changeBlogFormVisibility = (visible) => {
+    this.setState({visible: visible})
   }
 
   blogForm = () => {
@@ -176,7 +144,15 @@ class App extends React.Component {
         <p>Logged in as <b>{this.state.user.username}</b></p>
         <button onClick={this.logout}>Logout</button>
 
-        {this.newBlogForm()}
+        <BlogCreationForm 
+          visible={this.state.visible}
+          visibilityChange={this.changeBlogFormVisibility}
+          title={this.state.title}
+          author={this.state.author}
+          handleChange={this.handleFieldChange}
+          handleSubmit={this.postBlog}
+          url={this.state.url}
+        />
         
         <h2>blogs</h2>
 

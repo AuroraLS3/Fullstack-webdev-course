@@ -28,8 +28,8 @@
   }
   
   .msg {
-    color: green;
-    background: #a5ce7d;
+    color: #000;
+    background: #fff;
     font-size: 20px;
     border-style: solid;
     padding: 10px;
