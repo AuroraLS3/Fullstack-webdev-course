@@ -13,7 +13,7 @@ const Blog = ({blog, render}) => {
   (<div>
     <p>Url: <a href={blog.url}>{blog.url}</a></p>
     <p>Likes: {blog.likes}</p>
-    <p>Added by <b>{blog.user ? blog.user.username : 'Unknown'}</b></p>
+    <p>Added by <b>{blog.user ? blog.user.username : 'Anonymous'}</b></p>
   </div>) 
   : null
 

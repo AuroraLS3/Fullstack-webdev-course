@@ -120,7 +120,7 @@ class App extends React.Component {
       }
       await blogSvc.create(blog)
 
-      this.setState({title: '', author: '', url: ''})
+      this.setState({title: '', author: '', url: '', visible: false})
 
       this.notifyError('Blog was added successfully!')
 
