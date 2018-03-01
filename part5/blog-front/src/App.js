@@ -12,11 +12,23 @@ class App extends React.Component {
       blogs: [],
       username: '',
       password: '',
-      error: null
+      error: null,
+      user: null
     }
   }
 
   componentDidMount() {
+    const token = window.localStorage.getItem('token')
+    const username = window.localStorage.getItem('username')
+
+    if (token && username) {
+      this.setState(
+        {user: {
+          token: token,
+          username: username
+        }
+      })
+    }
     blogSvc.getAll().then(blogs =>
       this.setState({ blogs })
     )
@@ -44,9 +56,17 @@ class App extends React.Component {
           })
   
           this.setState({username: '', password: '', user})
+          window.localStorage.setItem('token', user.token)
+          window.localStorage.setItem('username', user.username)
       } catch (error) {
           this.notifyError('Käyttäjä tai Salasana on väärin.')
       }
+  }
+
+  logout = () => {
+    this.setState({user: null})
+    window.localStorage.removeItem('token')
+    window.localStorage.removeItem('username')
   }
 
   loginForm = () => (
@@ -85,6 +105,7 @@ class App extends React.Component {
         <h2>blogs</h2>
 
         <p>Logged in as {this.state.user.username}</p>
+        <button onClick={this.logout}>Logout</button>
 
         <Notification />
         {this.state.blogs.map(blog => 
