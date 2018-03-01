@@ -134,6 +134,10 @@ class App extends React.Component {
     this.setState({visible: visible})
   }
 
+  reRender = () => {
+    this.setState({visible: false})
+  }
+
   blogForm = () => {
     return (
       <div>
@@ -157,7 +161,7 @@ class App extends React.Component {
         <h2>blogs</h2>
 
         {this.state.blogs.map(blog => 
-          <Blog key={blog._id} blog={blog}/>
+          <Blog key={blog._id} blog={blog} render={this.reRender} />
         )}
       </div>
     );
