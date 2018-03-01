@@ -6,4 +6,15 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-export default { getAll}
+const create = (blog) => {
+  const config = {
+    headers: { 'Authorization': 'bearer '+ window.localStorage.getItem('token') }
+  }
+  const request = axios.post(baseUrl, blog, config)
+  return request.then(response => response.data)
+  .catch(error => {
+    throw error.response.data.error
+  })
+}
+
+export default {getAll, create}

@@ -12,9 +12,19 @@ class App extends React.Component {
       blogs: [],
       username: '',
       password: '',
-      error: null,
-      user: null
+      notification: null,
+      user: null,
+      //
+      title: '',
+      author: '',
+      url: ''
     }
+  }
+
+  updateBlogs = () => {
+    blogSvc.getAll().then(blogs =>
+      this.setState({ blogs })
+    )
   }
 
   componentDidMount() {
@@ -29,21 +39,20 @@ class App extends React.Component {
         }
       })
     }
-    blogSvc.getAll().then(blogs =>
-      this.setState({ blogs })
-    )
+
+    this.updateBlogs()
   } 
 
   notifyError = (errorMsg) => {
     this.setState({
-      error: errorMsg
+      notification: errorMsg
     })
     setTimeout(() => {
-      this.setState({ error: null })
+      this.setState({ notification: null })
     }, 5000);
   }
   
-  handleLoginFieldChange = (event) => {
+  handleFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
   
@@ -82,7 +91,7 @@ class App extends React.Component {
             type="text"
             name="username"
             value={this.state.username}
-            onChange={this.handleLoginFieldChange}
+            onChange={this.handleFieldChange}
           />
         </div>
         <div>
@@ -91,7 +100,7 @@ class App extends React.Component {
             type="password"
             name="password"
             value={this.state.password}
-            onChange={this.handleLoginFieldChange}
+            onChange={this.handleFieldChange}
           />
         </div>
         <button type="submit">kirjaudu</button>
@@ -99,15 +108,78 @@ class App extends React.Component {
     </div>
   )
 
+  postBlog = async (event) => {
+    event.preventDefault()
+    try {
+      const blog = {
+        title: this.state.title,
+        author: this.state.author,
+        url: this.state.url
+      }
+      await blogSvc.create(blog)
+
+      this.setState({title: '', author: '', url: ''})
+
+      this.notifyError('Blog was added successfully!')
+
+      await this.updateBlogs()
+    } catch (error) {
+      this.notifyError('Error occurred: ' + error)
+    }
+  }
+
+  newBlogForm = () => {
+    return (
+    <div>
+      <h3>Create New</h3>
+      <form onSubmit={this.postBlog}>
+        <div>
+          Title: 
+          <input
+            type="text"
+            name="title"
+            value={this.state.title}
+            onChange={this.handleFieldChange}
+          />
+        </div>
+        <div>
+          Author: 
+          <input
+            type="text"
+            name="author"
+            value={this.state.author}
+            onChange={this.handleFieldChange}
+          />
+        </div>
+        <div>
+          Url: 
+          <input
+            type="text"
+            name="url"
+            value={this.state.url}
+            onChange={this.handleFieldChange}
+          />
+        </div>
+        <button type="submit">Create</button>
+      </form>
+    </div>
+    )
+  }
+
   blogForm = () => {
     return (
       <div>
-        <h2>blogs</h2>
+        <h2>Blog App</h2>
 
-        <p>Logged in as {this.state.user.username}</p>
+        <Notification message={this.state.notification} />
+
+        <p>Logged in as <b>{this.state.user.username}</b></p>
         <button onClick={this.logout}>Logout</button>
 
-        <Notification />
+        {this.newBlogForm()}
+        
+        <h2>blogs</h2>
+
         {this.state.blogs.map(blog => 
           <Blog key={blog._id} blog={blog}/>
         )}
