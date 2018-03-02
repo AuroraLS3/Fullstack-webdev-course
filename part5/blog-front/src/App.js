@@ -152,8 +152,6 @@ class App extends React.Component {
     }
 
     await blogSvc.update(updatedBlog)
-
-    this.notifyError('Good Choice!')
   }
 
   deleteBlog = (blog) => async () => {

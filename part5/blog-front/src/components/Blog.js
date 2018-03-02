@@ -4,6 +4,7 @@ class Blog extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      likes: props.blog.likes,
       visible: false
     }
   }
@@ -16,8 +17,8 @@ class Blog extends React.Component {
     const info = this.state.visible ? 
       (<div className="info">
         <p>Url: <a href={blog.url}>{blog.url}</a></p>
-        <p>Likes: {blog.likes} <button onClick={() => {
-          blog.likes = blog.likes + 1
+        <p>Likes: {this.state.likes} <button onClick={() => {
+          this.setState({likes: this.state.likes + 1}) 
           button()
         }}>Like</button></p>
         <p>Added by <b>{blog.user ? blog.user.username : 'Anonymous'}</b></p>
