@@ -1,32 +1,39 @@
 import React from 'react'
 
-const Blog = ({blog, render, button, del}) => {
-  if (blog.visible === undefined) {
-    blog.visible = false
+class Blog extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      visible: false
+    }
   }
 
-  const blogClickHandler = () => {
-    blog.visible = !blog.visible
-    render()
-  }
+  render = () => {
+    const blog = this.props.blog
+    const button = this.props.button
+    const del = this.props.del
 
-  const info = blog.visible ? 
-  (<div>
-    <p>Url: <a href={blog.url}>{blog.url}</a></p>
-    <p>Likes: {blog.likes} <button onClick={button}>Like</button></p>
-    <p>Added by <b>{blog.user ? blog.user.username : 'Anonymous'}</b></p>
-    <button onClick={del}>Delete</button>
-  </div>) 
-  : null
+    const info = this.state.visible ? 
+      (<div className="info">
+        <p>Url: <a href={blog.url}>{blog.url}</a></p>
+        <p>Likes: {blog.likes} <button onClick={() => {
+          blog.likes = blog.likes + 1
+          button()
+        }}>Like</button></p>
+        <p>Added by <b>{blog.user ? blog.user.username : 'Anonymous'}</b></p>
+        <button onClick={del}>Delete</button>
+      </div>) 
+      : null
 
-  return (
-    <div className="blog">
-      <div onClick={blogClickHandler}>
-        {blog.title} by <b>{blog.author}</b>
+    return (
+      <div className="blog">
+        <div className="title" onClick={() => this.setState({visible: !this.state.visible})}>
+          {blog.title} by <b>{blog.author}</b>
+        </div>
+        {info}
       </div>
-      {info}
-    </div>
-  )
+    )
+  }
 }
 
 export default Blog

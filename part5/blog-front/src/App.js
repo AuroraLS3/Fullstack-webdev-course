@@ -25,10 +25,14 @@ class App extends React.Component {
 
   updateBlogs = () => {
     blogSvc.getAll().then(blogs => {
-      blogs.sort((a, b) => {
-        return b.likes - a.likes
-      })
+      this.sortBlogs(blogs)
       this.setState({ blogs })
+    })
+  }
+
+  sortBlogs = (blogs) => {
+    blogs.sort((a, b) => {
+      return b.likes - a.likes
     })
   }
 
@@ -87,7 +91,7 @@ class App extends React.Component {
     <div>
       <Notification message={this.state.notification} />
 
-      <h2>Kirjaudu</h2>
+      <h2 className="title">Login</h2>
   
       <form onSubmit={this.login}>
         <div>
@@ -108,7 +112,7 @@ class App extends React.Component {
             onChange={this.handleFieldChange}
           />
         </div>
-        <button type="submit">kirjaudu</button>
+        <button type="submit">login</button>
       </form>
     </div>
   )
@@ -137,10 +141,6 @@ class App extends React.Component {
     this.setState({visible: visible})
   }
 
-  reRender = () => {
-    this.setState({visible: false})
-  }
-
   likeBlog = (blog) => async () => {
     let updatedBlog = {
       _id: blog._id,
@@ -152,8 +152,8 @@ class App extends React.Component {
     }
 
     await blogSvc.update(updatedBlog)
-    await this.updateBlogs()
-    this.reRender()
+
+    this.notifyError('Good Choice!')
   }
 
   deleteBlog = (blog) => async () => {
@@ -194,7 +194,6 @@ class App extends React.Component {
           <Blog 
             key={blog._id} 
             blog={blog} 
-            render={this.reRender} 
             button={this.likeBlog(blog)} 
             del={
               !blog.user 
