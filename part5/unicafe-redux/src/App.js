@@ -11,12 +11,10 @@ store.getTotal = () => {
   return state.good + state.ok + state.bad
 }
 
-const Statistiikka = () => {
-  console.log('Render Statistiikka')
+const Statistiikka = (props) => {
+  console.log('**')
   const palautteita = store.getTotal()
   const state = store.getState()
-
-  console.log(palautteita)
 
   if (palautteita === 0) {
     return (
@@ -34,7 +32,7 @@ const Statistiikka = () => {
         <tbody>
           <tr>
             <td>hyvä</td>
-            <td>{state.good}</td>
+            <td>{store.getState().good}</td>
           </tr>
           <tr>
             <td>neutraali</td>
@@ -50,12 +48,12 @@ const Statistiikka = () => {
           </tr>
           <tr>
             <td>positiivisia</td>
-            <td>{state.good / palautteita} %</td>
+            <td>{state.good * 100.0 / palautteita} %</td>
           </tr>
         </tbody>
       </table>
 
-      <button>nollaa tilasto</button>
+      <button onClick={props.reset}>nollaa tilasto</button>
     </div >
   )
 }
@@ -63,7 +61,12 @@ const Statistiikka = () => {
 class App extends React.Component {
   constructor(props) {
     super(props)
-    store.subscribe(() => {this.render()})
+    this.state = {
+      s: 0
+    }
+    store.subscribe(() => {
+      this.setState({s: this.state.s+1})
+    })
   }
 
   klik = (nappi) => () => {
@@ -71,14 +74,16 @@ class App extends React.Component {
   }
 
   render() {
+    console.log('*')
     console.log(store.getState())
+    console.log(store.getTotal())
     return (
       <div>
         <h2>anna palautetta</h2>
         <button onClick={this.klik('GOOD')}>hyvä</button>
         <button onClick={this.klik('OK')}>neutraali</button>
         <button onClick={this.klik('BAD')}>huono</button>
-        <Statistiikka />
+        <Statistiikka reset={() => this.klik('ZERO')} />
       </div>
     )
   }
