@@ -1,5 +1,5 @@
 import React from 'react'
-const Blog = ({blog, render}) => {
+const Blog = ({blog, render, button}) => {
   if (blog.visible === undefined) {
     blog.visible = false
   }
@@ -12,14 +12,16 @@ const Blog = ({blog, render}) => {
   const info = blog.visible ? 
   (<div>
     <p>Url: <a href={blog.url}>{blog.url}</a></p>
-    <p>Likes: {blog.likes}</p>
+    <p>Likes: {blog.likes} <button onClick={button}>Like</button></p>
     <p>Added by <b>{blog.user ? blog.user.username : 'Anonymous'}</b></p>
   </div>) 
   : null
 
   return (
-    <div className="blog" onClick={blogClickHandler}>
-      {blog.title} by <b>{blog.author}</b>
+    <div className="blog">
+      <div onClick={blogClickHandler}>
+        {blog.title} by <b>{blog.author}</b>
+      </div>
       {info}
     </div>
   )

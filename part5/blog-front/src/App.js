@@ -24,9 +24,12 @@ class App extends React.Component {
   }
 
   updateBlogs = () => {
-    blogSvc.getAll().then(blogs =>
+    blogSvc.getAll().then(blogs => {
+      blogs.sort((a, b) => {
+        return b.likes - a.likes
+      })
       this.setState({ blogs })
-    )
+    })
   }
 
   componentDidMount() {
@@ -70,7 +73,7 @@ class App extends React.Component {
           window.localStorage.setItem('token', user.token)
           window.localStorage.setItem('username', user.username)
       } catch (error) {
-          this.notifyError('Käyttäjä tai Salasana on väärin.')
+          this.notifyError('Wrong User or Password.')
       }
   }
 
@@ -82,7 +85,7 @@ class App extends React.Component {
 
   loginForm = () => (
     <div>
-      <Notification />
+      <Notification message={this.state.notification} />
 
       <h2>Kirjaudu</h2>
   
@@ -138,6 +141,21 @@ class App extends React.Component {
     this.setState({visible: false})
   }
 
+  likeBlog = (blog) => async () => {
+    let updatedBlog = {
+      _id: blog._id,
+      user: blog.user,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+
+    await blogSvc.update(updatedBlog)
+    await this.updateBlogs()
+    this.reRender()
+  }
+
   blogForm = () => {
     return (
       <div>
@@ -148,6 +166,8 @@ class App extends React.Component {
         <p>Logged in as <b>{this.state.user.username}</b></p>
         <button onClick={this.logout}>Logout</button>
 
+        <h2>blogs</h2>
+
         <BlogCreationForm 
           visible={this.state.visible}
           visibilityChange={this.changeBlogFormVisibility}
@@ -157,11 +177,9 @@ class App extends React.Component {
           handleSubmit={this.postBlog}
           url={this.state.url}
         />
-        
-        <h2>blogs</h2>
 
         {this.state.blogs.map(blog => 
-          <Blog key={blog._id} blog={blog} render={this.reRender} />
+          <Blog key={blog._id} blog={blog} render={this.reRender} button={this.likeBlog(blog)} />
         )}
       </div>
     );

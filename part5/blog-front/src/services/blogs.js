@@ -17,4 +17,15 @@ const create = (blog) => {
   })
 }
 
-export default {getAll, create}
+const update = (blog) => {
+  const config = {
+    headers: { 'Authorization': 'bearer '+ window.localStorage.getItem('token') }
+  }
+  const request = axios.put(baseUrl + '/'+blog._id, blog, config)
+  return request.then(response => response.data)
+  .catch(error => {
+    throw error.response.data.error
+  })
+}
+
+export default {getAll, create, update}
