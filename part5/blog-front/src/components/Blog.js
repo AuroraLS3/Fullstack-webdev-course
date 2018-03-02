@@ -1,4 +1,5 @@
 import React from 'react'
+
 const Blog = ({blog, render, button, del}) => {
   if (blog.visible === undefined) {
     blog.visible = false

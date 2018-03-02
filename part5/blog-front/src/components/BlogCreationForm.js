@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const BlogCreationForm = (props) => {
     const hideWhenVisible = { display: props.visible ? 'none' : '' }
@@ -45,6 +46,15 @@ const BlogCreationForm = (props) => {
             </div>
         </div>
     )
+}
+
+BlogCreationForm.propTypes = {
+    visible: PropTypes.bool.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    handleChange: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired
 }
 
 export default BlogCreationForm

@@ -9,3 +9,4 @@ Personal answer repository for FullStack -webdevelopment course in University of
 - [Part 3](part3)
   - [Link to App](https://fullstack-rsl-phonebook.herokuapp.com/)
 - [Part 4](part4)
+- [Part 5](part5)
