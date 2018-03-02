@@ -196,7 +196,11 @@ class App extends React.Component {
             blog={blog} 
             render={this.reRender} 
             button={this.likeBlog(blog)} 
-            del={this.deleteBlog(blog)} 
+            del={
+              !blog.user 
+              || blog.user.username === this.state.user.username 
+              ? this.deleteBlog(blog) : undefined
+            } 
           />
         )}
       </div>
