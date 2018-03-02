@@ -156,6 +156,18 @@ class App extends React.Component {
     this.reRender()
   }
 
+  deleteBlog = (blog) => async () => {
+    try {
+      if (window.confirm('Are you sure you want to delete "'+blog.title+'" by '+blog.author)) {
+        await blogSvc.remove(blog)
+        this.setState({blogs: this.state.blogs.filter(b => b._id !== blog._id)})
+      }
+      this.notifyError('Blog removed successfully!')
+    } catch (error) {
+      this.notifyError('Error occurred: ' + error)
+    }
+  }
+
   blogForm = () => {
     return (
       <div>
@@ -179,7 +191,13 @@ class App extends React.Component {
         />
 
         {this.state.blogs.map(blog => 
-          <Blog key={blog._id} blog={blog} render={this.reRender} button={this.likeBlog(blog)} />
+          <Blog 
+            key={blog._id} 
+            blog={blog} 
+            render={this.reRender} 
+            button={this.likeBlog(blog)} 
+            del={this.deleteBlog(blog)} 
+          />
         )}
       </div>
     );

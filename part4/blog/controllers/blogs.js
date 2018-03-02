@@ -83,7 +83,7 @@ router.delete('/:id', async (req, res) => {
 
         const blog = await Blog.findById(req.params.id)
 
-        if (blog.user.toString() !== user._id.toString()) {
+        if (blog.user && (blog.user.toString() !== user._id.toString())) {
             return res.status(403).send({ error: 'User did not add this blog' })
         }
 

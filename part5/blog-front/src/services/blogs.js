@@ -28,4 +28,15 @@ const update = (blog) => {
   })
 }
 
-export default {getAll, create, update}
+const remove = (blog) => {
+  const config = {
+    headers: { 'Authorization': 'bearer '+ window.localStorage.getItem('token') }
+  }
+  const request = axios.delete(baseUrl + '/' + blog._id, config)
+  return request.then(response => response.data)
+  .catch(error => {
+    throw error.response.data.error
+  })
+}
+
+export default {getAll, create, update, remove}
