@@ -17,15 +17,7 @@ const reducer = (store = [], action) => {
   }
 
   if (action.type === 'CREATE') {
-    const toSave = { content: action.content, id: getId(), votes: 0 }
-
-    anecdoteSvc.addNew(toSave)
-      .then(result => result)
-      .catch(error => {
-        console.log(error)
-        return [...store]
-      })
-    return [...store, toSave]
+    return [...store, action.data.anecdote]
   }
 
   if (action.type === 'INIT_ANECDOTES') {
@@ -36,14 +28,37 @@ const reducer = (store = [], action) => {
 }
 
 export const createAnecdote = (content) => {
-  return {
-    type: 'CREATE',
-    content
+  const toSave = { content: content, id: getId(), votes: 0 }
+  return async (dispatch) => {
+    try {
+      await anecdoteSvc.addNew(toSave)
+
+      dispatch({
+        type: 'CREATE',
+        data: {
+          anecdote: toSave
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 
 export const castVote = (anecdote) => {
+  /*store.dispatch(notify(`You voted '${anecdote.content}'`))
+  setTimeout(() => store.dispatch(hide()), 5000)*/
   return { type: 'VOTE', id: anecdote.id }
+}
+
+export const initializeAnecdotes = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteSvc.getAll()
+    dispatch({
+      type: 'INIT_ANECDOTES',
+      data: anecdotes
+    })
+  }
 }
 
 export default reducer

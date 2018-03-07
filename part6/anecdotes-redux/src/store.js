@@ -24,14 +24,4 @@ anecdoteSvc.getAll().then(anecdotes =>
   })
 )
 
-export const initializeAnecdotes = () => {
-  return async (dispatch) => {
-    const anecdotes = await anecdoteSvc.getAll()
-    dispatch({
-      type: 'INIT_ANECDOTES',
-      data: anecdotes
-    })
-  }
-}
-
 export default store

@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { createAnecdote } from '../reducers/anecdoteReducer'
 import { notify, hide } from '../reducers/notificationReducer'
 
@@ -14,11 +15,11 @@ class AnecdoteForm extends React.Component {
     this.unsubscribe()
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) =>  {
     e.preventDefault()
     const content = e.target.anecdote.value
 
-    this.context.store.dispatch(createAnecdote(content))
+    this.props.createAnecdote(content)
     this.context.store.dispatch(notify(`Created new Anecdote: '${content}'`))
     setTimeout(() => this.context.store.dispatch(hide()), 5000)
 
@@ -29,10 +30,7 @@ class AnecdoteForm extends React.Component {
     return (
       <div>
         <h2>create new</h2>
-        <form onSubmit={(event) => {
-          this.handleSubmit.bind(this)
-          this.handleSubmit(event)
-        }}>
+        <form onSubmit={this.handleSubmit}>
           <div><input name='anecdote' /></div>
           <button>create</button>
         </form>
@@ -45,4 +43,7 @@ AnecdoteForm.contextTypes = {
   store: PropTypes.object
 }
 
-export default AnecdoteForm
+export default connect(
+  null, { createAnecdote }
+)(AnecdoteForm)
+

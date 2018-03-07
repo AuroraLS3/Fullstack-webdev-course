@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { castVote } from '../reducers/anecdoteReducer'
 import { notify, hide } from '../reducers/notificationReducer'
 
@@ -17,7 +18,6 @@ class AnecdoteList extends React.Component {
     const store = this.context.store
     const anecdotes = store.getState().anecdotes
     const filter = store.getState().filter.filter
-    console.log(anecdotes)
     return (
       <div>
         <h2>Anecdotes</h2>
@@ -32,9 +32,7 @@ class AnecdoteList extends React.Component {
               <div>
                 has {anecdote.votes}&nbsp;
                 <button onClick={() => {
-                  store.dispatch(castVote(anecdote))
-                  store.dispatch(notify(`You voted '${anecdote.content}'`))
-                  setTimeout(() => store.dispatch(hide()), 5000)
+                  this.props.castVote(anecdote)
                 }}>
                   vote
                 </button>
@@ -51,4 +49,6 @@ AnecdoteList.contextTypes = {
   store: PropTypes.object
 }
 
-export default AnecdoteList
+export default connect(
+  null, { castVote }
+)(AnecdoteList)

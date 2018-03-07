@@ -14,7 +14,7 @@ class Filter extends React.Component {
     this.unsubscribe()
   }
 
-  handleChange(event) {
+  handleChange = (event) => {
     event.preventDefault()
     const newFilter = event.target.value
 
@@ -27,10 +27,7 @@ class Filter extends React.Component {
 
     return (
       <div style={style}>
-        filter <input onChange={(event) => {
-          this.handleChange.bind(this)
-          this.handleChange(event)
-        }} />
+        filter <input onChange={this.handleChange} />
       </div>
     )
   }

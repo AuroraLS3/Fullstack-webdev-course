@@ -5,7 +5,7 @@ import AnecdoteList from './components/AnecdoteList'
 import Filter from './components/Filter'
 
 import { connect } from 'react-redux'
-import { initializeAnecdotes } from './store.js'
+import { initializeAnecdotes } from './reducers/anecdoteReducer'
 
 class App extends React.Component {
 
