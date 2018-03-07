@@ -1,3 +1,5 @@
+import anecdoteSvc from '../services/anecdotes'
+
 const getId = () => (100000 * Math.random()).toFixed(0)
 
 const reducer = (store = [], action) => {
@@ -5,11 +7,22 @@ const reducer = (store = [], action) => {
     const old = store.filter(a => a.id !== action.id)
     const voted = store.find(a => a.id === action.id)
 
+    // TODO Backend save
+
     return [...old, { ...voted, votes: voted.votes + 1 }]
   }
   if (action.type === 'CREATE') {
+    const toSave = { content: action.content, id: getId(), votes: 0 }
 
-    return [...store, { content: action.content, id: getId(), votes: 0 }]
+    // TODO Fix
+    anecdoteSvc.addNew(toSave)
+      .then(result => {
+        return [...store, result.value]
+      })
+      .catch(error => {
+        console.log(error)
+        return [...store]
+      })
   }
 
   if (action.type === 'ADD') {
