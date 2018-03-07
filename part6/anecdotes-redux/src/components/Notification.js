@@ -1,13 +1,16 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class Notification extends React.Component {
+
   render() {
     const style = {
       border: 'solid',
       padding: 10,
       borderWidth: 1
     }
-    const message = this.props.store.getState().notification.notification
+    console.log(this.context)
+    const message = this.context.store.getState().notification.notification
 
     if (message === null) {
       return <div></div>
@@ -19,6 +22,10 @@ class Notification extends React.Component {
       </div>
     )
   }
+}
+
+Notification.contextTypes = {
+  store: PropTypes.object
 }
 
 export default Notification
