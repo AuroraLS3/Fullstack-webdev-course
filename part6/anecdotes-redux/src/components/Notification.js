@@ -3,6 +3,15 @@ import PropTypes from 'prop-types'
 
 class Notification extends React.Component {
 
+  componentDidMount() {
+    const { store } = this.context
+    this.unsubscribe = store.subscribe(() => this.forceUpdate())
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
+
   render() {
     const style = {
       border: 'solid',

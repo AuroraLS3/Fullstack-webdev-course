@@ -16,7 +16,6 @@ const addNew = async (anecdote) => {
 }
 
 const update = async (anecdote) => {
-  console.log('update', anecdote)
     const response = await axios.put(
         'http://localhost:3001/anecdotes/' + anecdote.id,
         anecdote

@@ -6,13 +6,6 @@ const reducer = (store = [], action) => {
   if (action.type === 'VOTE') {
     const old = store.filter(a => a.id !== action.id)
     const voted = store.find(a => a.id === action.id)
-
-    anecdoteSvc.update({ ...voted, votes: voted.votes + 1 })
-      .then(result => result)
-      .catch(error => {
-        console.log(error)
-      })
-
     return [...old, { ...voted, votes: voted.votes + 1 }]
   }
 
@@ -46,9 +39,15 @@ export const createAnecdote = (content) => {
 }
 
 export const castVote = (anecdote) => {
-  /*store.dispatch(notify(`You voted '${anecdote.content}'`))
-  setTimeout(() => store.dispatch(hide()), 5000)*/
-  return { type: 'VOTE', id: anecdote.id }
+  return async (dispatch) => {
+    try {
+      await anecdoteSvc
+        .update({ ...anecdote, votes: anecdote.votes + 1 })
+      dispatch({ type: 'VOTE', id: anecdote.id })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
 
 export const initializeAnecdotes = () => {

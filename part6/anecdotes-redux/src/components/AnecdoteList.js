@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { castVote } from '../reducers/anecdoteReducer'
-import { notify, hide } from '../reducers/notificationReducer'
+import { notifyDefault } from '../reducers/notificationReducer'
 
 class AnecdoteList extends React.Component {
   componentDidMount() {
@@ -33,6 +33,9 @@ class AnecdoteList extends React.Component {
                 has {anecdote.votes}&nbsp;
                 <button onClick={() => {
                   this.props.castVote(anecdote)
+                  this.props.notifyDefault(
+                    `You voted '${anecdote.content}'`
+                  )
                 }}>
                   vote
                 </button>
@@ -50,5 +53,5 @@ AnecdoteList.contextTypes = {
 }
 
 export default connect(
-  null, { castVote }
+  null, { castVote, notifyDefault }
 )(AnecdoteList)
