@@ -16,7 +16,10 @@ class Filter extends React.Component {
 
     return (
       <div style={style}>
-        filter <input onChange={this.handleChange} />
+        filter <input onChange={(event) => {
+          this.handleChange.bind(this)
+          this.handleChange(event)
+        }} />
       </div>
     )
   }

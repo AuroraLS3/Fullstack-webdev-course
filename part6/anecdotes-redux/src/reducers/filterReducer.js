@@ -1,5 +1,5 @@
 const initialState = {
-  filter: null
+  filter: ''
 }
 
 const reducer = (store = initialState, action) => {

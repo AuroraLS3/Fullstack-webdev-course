@@ -5,10 +5,6 @@ import { notify, hide } from '../reducers/notificationReducer'
 
 class AnecdoteForm extends React.Component {
 
-  constructor(props) {
-    super(props)
-  }
-
   handleSubmit(e) {
     e.preventDefault()
     const content = e.target.anecdote.value
