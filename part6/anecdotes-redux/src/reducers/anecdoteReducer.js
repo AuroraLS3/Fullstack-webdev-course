@@ -7,7 +7,6 @@ const reducer = (store = [], action) => {
     const old = store.filter(a => a.id !== action.id)
     const voted = store.find(a => a.id === action.id)
 
-    // TODO Backend save
     anecdoteSvc.update({ ...voted, votes: voted.votes + 1 })
       .then(result => result)
       .catch(error => {
@@ -20,7 +19,6 @@ const reducer = (store = [], action) => {
   if (action.type === 'CREATE') {
     const toSave = { content: action.content, id: getId(), votes: 0 }
 
-    // TODO Fix
     anecdoteSvc.addNew(toSave)
       .then(result => result)
       .catch(error => {
@@ -30,12 +28,8 @@ const reducer = (store = [], action) => {
     return [...store, toSave]
   }
 
-  if (action.type === 'ADD') {
-    return [...store, {
-      content: action.data.content,
-      id: action.data.id,
-      votes: action.data.votes
-    }]
+  if (action.type === 'INIT_ANECDOTES') {
+    return [...store, action.data]
   }
 
   return store
