@@ -8,21 +8,26 @@ const reducer = (store = [], action) => {
     const voted = store.find(a => a.id === action.id)
 
     // TODO Backend save
+    anecdoteSvc.update({ ...voted, votes: voted.votes + 1 })
+      .then(result => result)
+      .catch(error => {
+        console.log(error)
+      })
 
     return [...old, { ...voted, votes: voted.votes + 1 }]
   }
+
   if (action.type === 'CREATE') {
     const toSave = { content: action.content, id: getId(), votes: 0 }
 
     // TODO Fix
     anecdoteSvc.addNew(toSave)
-      .then(result => {
-        return [...store, result.value]
-      })
+      .then(result => result)
       .catch(error => {
         console.log(error)
         return [...store]
       })
+    return [...store, toSave]
   }
 
   if (action.type === 'ADD') {

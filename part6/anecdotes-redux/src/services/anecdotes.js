@@ -1,7 +1,9 @@
 import axios from 'axios'
 
 const getAll = async () => {
-    const response = await axios.get('http://localhost:3001/anecdotes')
+    const response = await axios.get(
+      'http://localhost:3001/anecdotes'
+    )
     return response.data
 }
 
@@ -14,6 +16,7 @@ const addNew = async (anecdote) => {
 }
 
 const update = async (anecdote) => {
+  console.log('update', anecdote)
     const response = await axios.put(
         'http://localhost:3001/anecdotes/' + anecdote.id,
         anecdote
