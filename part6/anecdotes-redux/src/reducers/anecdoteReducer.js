@@ -29,7 +29,7 @@ const reducer = (store = [], action) => {
   }
 
   if (action.type === 'INIT_ANECDOTES') {
-    return [...store, action.data]
+    return [...store, ...action.data]
   }
 
   return store
