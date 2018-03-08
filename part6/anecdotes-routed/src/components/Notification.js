@@ -6,8 +6,10 @@ class Notification extends React.Component {
     const style = {
       border: 'solid',
       padding: 10,
-      borderWidth: 1
+      borderWidth: 1,
+      color: 'green'
     }
+
     const message = this.props.notification
 
     if (message === null || message.length === 0) {
