@@ -1,51 +1,17 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
+import Anecdote from './components/Anecdote'
+import AnecdoteList from './components/AnecdoteList'
+import About from './components/About'
+import Footer from './components/Footer'
+import Notification from './components/Notification'
 
 const Menu = () => (
   <div>
     <Link to='/'>anecdotes</Link>&nbsp;
     <Link to='/new'>create new</Link>&nbsp;
     <Link to='/about'>about</Link>&nbsp;
-  </div>
-)
-
-const AnecdoteList = ({ anecdotes }) => (
-  <div>
-    <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
-    </ul>
-  </div>
-)
-
-const Anecdote = ({ anecdote }) => (
-  <div>
-    <h2>{anecdote.content}</h2>
-    <p>has {anecdote.votes} votes</p>
-    <p>For more info see <a target="_blank" href={anecdote.info}>{anecdote.info}</a></p>
-  </div>
-)
-
-const About = () => (
-  <div>
-    <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
-
-    <em>An anecdote is a brief, revealing account of an individual person or an incident.
-      Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
-      such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
-      An anecdote is "a story with a point."</em>
-
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
-  </div>
-)
-
-const Footer = () => (
-  <div>
-    Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
-
-    See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code.
   </div>
 )
 
@@ -72,6 +38,7 @@ class CreateNew extends React.Component {
       info: this.state.info,
       votes: 0
     })
+    this.props.history.push('/')
   }
 
   render() {
@@ -124,9 +91,15 @@ class App extends React.Component {
     }
   }
 
+  notify = (message) => {
+    this.setState({ notification: message })
+    setTimeout(() => this.setState({notification: ''}), 10000)
+  }
+
   addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     this.setState({ anecdotes: this.state.anecdotes.concat(anecdote) })
+    this.notify(`New Anecdote "${anecdote.content}" created!`)
   }
 
   anecdoteById = (id) =>
@@ -153,6 +126,7 @@ class App extends React.Component {
     return (
       <div>
         <h1>Software anecdotes</h1>
+        <Notification notification={this.state.notification} />
         <Router>
           <div>
             <Menu />
@@ -162,8 +136,8 @@ class App extends React.Component {
             <Route path="/anecdotes/:id" render={({match}) =>
               <Anecdote anecdote={this.anecdoteById(match.params.id)} />
             } />
-            <Route path="/new" render={() =>
-              <CreateNew addNew={this.addNew} />
+            <Route path="/new" render={({history}) =>
+              <CreateNew history={history} addNew={this.addNew} />
             } />
             <Route path="/about" render={() =>
               <About />
