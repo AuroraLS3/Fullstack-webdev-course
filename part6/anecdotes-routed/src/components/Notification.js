@@ -1,15 +1,10 @@
 import React from 'react'
 
+import { Alert } from 'reactstrap'
+
 class Notification extends React.Component {
 
   render() {
-    const style = {
-      border: 'solid',
-      padding: 10,
-      borderWidth: 1,
-      color: 'green'
-    }
-
     const message = this.props.notification
 
     if (message === null || message.length === 0) {
@@ -17,9 +12,9 @@ class Notification extends React.Component {
     }
 
     return (
-      <div style={style}>
+      <Alert color="success">
         {message}
-      </div>
+      </Alert>
     )
   }
 }
