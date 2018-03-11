@@ -5,6 +5,7 @@ import blogSvc from './services/blogs'
 
 import loginSvc from './services/login'
 import BlogCreationForm from './components/BlogCreationForm';
+import Menu from './components/Menu';
 
 class App extends React.Component {
   constructor(props) {
@@ -173,8 +174,10 @@ class App extends React.Component {
 
         <Notification message={this.state.notification} />
 
-        <p>Logged in as <b>{this.state.user.username}</b></p>
-        <button onClick={this.logout}>Logout</button>
+        <Menu 
+          logout={this.logout} 
+          username={this.state.user.username}
+        />
 
         <h2>blogs</h2>
 
