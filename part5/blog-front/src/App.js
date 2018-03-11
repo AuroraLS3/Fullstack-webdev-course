@@ -7,6 +7,15 @@ import loginSvc from './services/login'
 import BlogCreationForm from './components/BlogCreationForm';
 import Menu from './components/Menu';
 
+import {
+  Container,
+  Button,
+  ListGroup,
+  Form,
+  FormGroup,
+  Input
+} from 'reactstrap'
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -43,15 +52,16 @@ class App extends React.Component {
 
     if (token && username) {
       this.setState(
-        {user: {
-          token: token,
-          username: username
-        }
-      })
+        {
+          user: {
+            token: token,
+            username: username
+          }
+        })
     }
 
     this.updateBlogs()
-  } 
+  }
 
   notifyError = (errorMsg) => {
     this.setState({
@@ -61,29 +71,29 @@ class App extends React.Component {
       this.setState({ notification: null })
     }, 5000);
   }
-  
+
   handleFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
-  
+
   login = async (event) => {
-      event.preventDefault()
-      try {
-          const user = await loginSvc.login({
-              username: this.state.username,
-              password: this.state.password
-          })
-  
-          this.setState({username: '', password: '', user})
-          window.localStorage.setItem('token', user.token)
-          window.localStorage.setItem('username', user.username)
-      } catch (error) {
-          this.notifyError('Wrong User or Password.')
-      }
+    event.preventDefault()
+    try {
+      const user = await loginSvc.login({
+        username: this.state.username,
+        password: this.state.password
+      })
+
+      this.setState({ username: '', password: '', user })
+      window.localStorage.setItem('token', user.token)
+      window.localStorage.setItem('username', user.username)
+    } catch (error) {
+      this.notifyError('Wrong User or Password.')
+    }
   }
 
   logout = () => {
-    this.setState({user: null})
+    this.setState({ user: null })
     window.localStorage.removeItem('token')
     window.localStorage.removeItem('username')
   }
@@ -92,29 +102,31 @@ class App extends React.Component {
     <div>
       <Notification message={this.state.notification} />
 
-      <h2 className="title">Login</h2>
-  
-      <form onSubmit={this.login}>
-        <div>
-          Username: 
-          <input
-            type="text"
-            name="username"
-            value={this.state.username}
-            onChange={this.handleFieldChange}
-          />
-        </div>
-        <div>
-          Password: 
-          <input
-            type="password"
-            name="password"
-            value={this.state.password}
-            onChange={this.handleFieldChange}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
+      <Container>
+        <h2 className="title">Login</h2>
+
+        <Form onSubmit={this.login}>
+          <FormGroup>
+            Username:
+          <Input
+              type="text"
+              name="username"
+              value={this.state.username}
+              onChange={this.handleFieldChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            Password:
+          <Input
+              type="password"
+              name="password"
+              value={this.state.password}
+              onChange={this.handleFieldChange}
+            />
+          </FormGroup>
+          <Button color="success" type="submit">login</Button>
+        </Form>
+      </Container>
     </div>
   )
 
@@ -128,7 +140,7 @@ class App extends React.Component {
       }
       await blogSvc.create(blog)
 
-      this.setState({title: '', author: '', url: '', visible: false})
+      this.setState({ title: '', author: '', url: '', visible: false })
 
       this.notifyError('Blog was added successfully!')
 
@@ -139,7 +151,7 @@ class App extends React.Component {
   }
 
   changeBlogFormVisibility = (visible) => {
-    this.setState({visible: visible})
+    this.setState({ visible: visible })
   }
 
   likeBlog = (blog) => async () => {
@@ -157,9 +169,9 @@ class App extends React.Component {
 
   deleteBlog = (blog) => async () => {
     try {
-      if (window.confirm('Are you sure you want to delete "'+blog.title+'" by '+blog.author)) {
+      if (window.confirm('Are you sure you want to delete "' + blog.title + '" by ' + blog.author)) {
         await blogSvc.remove(blog)
-        this.setState({blogs: this.state.blogs.filter(b => b._id !== blog._id)})
+        this.setState({ blogs: this.state.blogs.filter(b => b._id !== blog._id) })
       }
       this.notifyError('Blog removed successfully!')
     } catch (error) {
@@ -170,47 +182,51 @@ class App extends React.Component {
   blogForm = () => {
     return (
       <div>
-        <h2>Blog App</h2>
-
         <Notification message={this.state.notification} />
 
-        <Menu 
-          logout={this.logout} 
+        <Menu
+          logout={this.logout}
           username={this.state.user.username}
         />
 
-        <h2>blogs</h2>
+        <Container>
+          <h2>blogs</h2>
 
-        <BlogCreationForm 
-          visible={this.state.visible}
-          visibilityChange={this.changeBlogFormVisibility}
-          title={this.state.title}
-          author={this.state.author}
-          handleChange={this.handleFieldChange}
-          handleSubmit={this.postBlog}
-          url={this.state.url}
-        />
-
-        {this.state.blogs.map(blog => 
-          <Blog 
-            key={blog._id} 
-            blog={blog} 
-            button={this.likeBlog(blog)} 
-            del={
-              !blog.user 
-              || blog.user.username === this.state.user.username 
-              ? this.deleteBlog(blog) : undefined
-            } 
+          <BlogCreationForm
+            visible={this.state.visible}
+            visibilityChange={this.changeBlogFormVisibility}
+            title={this.state.title}
+            author={this.state.author}
+            handleChange={this.handleFieldChange}
+            handleSubmit={this.postBlog}
+            url={this.state.url}
           />
-        )}
+
+          <br></br>
+
+          <ListGroup>
+            {this.state.blogs.map(blog =>
+              <Blog
+                key={blog._id}
+                blog={blog}
+                button={this.likeBlog(blog)}
+                del={
+                  !blog.user
+                    || blog.user.username === this.state.user.username
+                    ? this.deleteBlog(blog) : undefined
+                }
+              />
+            )}
+          </ListGroup>
+        </Container>
       </div>
     );
   }
 
   render() {
-    return !this.state.user 
-    ? this.loginForm() 
-    : this.blogForm()
+    return !this.state.user
+      ? this.loginForm()
+      : this.blogForm()
   }
 }
 

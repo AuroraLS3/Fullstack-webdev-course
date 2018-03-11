@@ -1,48 +1,57 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import {
+    Collapse,
+    Button,
+    Form,
+    Label,
+    Input,
+    FormGroup
+  } from 'reactstrap'
+
 const BlogCreationForm = (props) => {
     const hideWhenVisible = { display: props.visible ? 'none' : '' }
     const showWhenVisible = { display: props.visible ? '' : 'none' }
 
     return (
         <div>
-            <div style={showWhenVisible}>
+            <Collapse isOpen={props.visible}>
                 <h3>Create New</h3>
-                <form onSubmit={props.handleSubmit}>
-                    <div>
+                <Form onSubmit={props.handleSubmit}>
+                    <FormGroup>
                     Title: 
-                    <input
+                    <Input
                         type="text"
                         name="title"
                         value={props.title}
                         onChange={props.handleChange}
                     />
-                    </div>
-                    <div>
+                    </FormGroup>
+                    <FormGroup>
                     Author: 
-                    <input
+                    <Input
                         type="text"
                         name="author"
                         value={props.author}
                         onChange={props.handleChange}
                     />
-                    </div>
-                    <div>
+                    </FormGroup>
+                    <FormGroup>
                     Url: 
-                    <input
+                    <Input
                         type="text"
                         name="url"
                         value={props.url}
                         onChange={props.handleChange}
                     />
-                    </div>
-                    <button type="submit">Create</button>
-                </form>
-                <button onClick={e => props.visibilityChange(false)}>Cancel</button>
-            </div>
+                    </FormGroup>
+                    <Button color="success" type="submit">Create</Button>
+                    <Button color="warning" onClick={e => props.visibilityChange(false)}>Cancel</Button>
+                </Form>
+            </Collapse>
             <div style={hideWhenVisible}>
-                <button onClick={e => props.visibilityChange(true)}>Add a Blog</button>
+                <Button color="success" onClick={e => props.visibilityChange(true)}>Add a Blog</Button>
             </div>
         </div>
     )

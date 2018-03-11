@@ -1,5 +1,11 @@
 import React from 'react'
 
+import {
+  ListGroupItem,
+  Collapse,
+  Button
+} from 'reactstrap'
+
 class Blog extends React.Component {
   constructor(props) {
     super(props)
@@ -14,25 +20,26 @@ class Blog extends React.Component {
     const button = this.props.button
     const del = this.props.del
 
-    const info = this.state.visible ? 
+    const info =
       (<div className="info">
         <p>Url: <a href={blog.url}>{blog.url}</a></p>
-        <p>Likes: {this.state.likes} <button onClick={() => {
+        <p>Likes: {this.state.likes} <Button color="success" onClick={() => {
           this.setState({likes: this.state.likes + 1}) 
           button()
-        }}>Like</button></p>
+        }}>Like</Button></p>
         <p>Added by <b>{blog.user ? blog.user.username : 'Anonymous'}</b></p>
-        <button onClick={del}>Delete</button>
-      </div>) 
-      : null
+        <Button color="danger" onClick={del}>Delete</Button>
+      </div>)
 
     return (
-      <div className="blog">
+      <ListGroupItem>
         <div className="title" onClick={() => this.setState({visible: !this.state.visible})}>
           {blog.title} by <b>{blog.author}</b>
         </div>
+        <Collapse isOpen={this.state.visible}>
         {info}
-      </div>
+        </Collapse>
+      </ListGroupItem>
     )
   }
 }
